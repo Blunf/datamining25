@@ -23,9 +23,15 @@ def main():
     df['year'] = df['year'].astype(int)
 
     # 5) Connect to (or create) the SQLite database
-    db_path = 'climate_metrics.db'
+    db_dir = 'database'
+    os.makedirs(db_dir, exist_ok=True)
+    db_path = os.path.join(db_dir, 'climate_metrics.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
+
+    # 5) Ensure database directory exists
+
+
 
     # 6) Create the table with year as PRIMARY KEY
     cursor.execute('''
