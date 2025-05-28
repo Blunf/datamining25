@@ -1,0 +1,39 @@
+# Virtual environment
+.venv/
+env/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Byte-compiled / optimized
+*.egg
+*.egg-info/
+*.eggs
+*.whl
+
+# Distribution / packaging
+build/
+dist/
+
+# Data files
+data/
+db/
+climate_metrics.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment variables
+.env
