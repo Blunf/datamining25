@@ -12,13 +12,6 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 
 def aggregate_monthly_to_annual(df_monthly):
-    """
-    Given a DataFrame with monthly columns:
-      ['year', 'month', 'mean_temp_C', 'mean_tasmax_C', 'mean_tasmin_C', 'total_precip_mm']
-    Return a DataFrame with one row per year:
-      ['year', 'ann_mean_temp_C', 'ann_mean_tasmax_C', 'ann_mean_tasmin_C', 'ann_total_precip_mm']
-    Note: 1999 will be aggregated, but since yield starts in 2000, the 1999 row is dropped later.
-    """
     agg = df_monthly.groupby('year').agg({
         'mean_temp_C':     'mean',  # annual mean of monthly mean temperature
         'mean_tasmax_C':   'mean',  # annual mean of monthly max temperature
@@ -99,21 +92,10 @@ def evaluate_regression(model, X_val, y_val, X_test, y_test):
 
 
 def aggregate_future_monthly_to_annual(df_monthly):
-    """
-    Given a DataFrame of future monthly data (2021–2040):
-      ['year','month','mean_temp_C','mean_tasmax_C','mean_tasmin_C','total_precip_mm']
-    Return annual columns:
-      ['year','ann_mean_temp_C','ann_mean_tasmax_C','ann_mean_tasmin_C','ann_total_precip_mm'].
-    """
-    return aggregate_monthly_to_annual(df_monthly)  # reuse same aggregation logic
+    return aggregate_monthly_to_annual(df_monthly) 
 
 
 def predict_future(model, df_future_annual):
-    """
-    Given a trained model and a DataFrame df_future_annual with columns:
-      ['year','ann_mean_temp_C','ann_mean_tasmax_C','ann_mean_tasmin_C','ann_total_precip_mm']
-    Return a DataFrame with ['year','predicted_banana_yield_t_ha'].
-    """
     FEATURES = [
         'ann_mean_temp_C',
         'ann_mean_tasmax_C',
