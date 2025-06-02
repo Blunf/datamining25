@@ -8,12 +8,12 @@ import matplotlib.pyplot as plt
 
 def main():
     # 1) Load historical banana yield (2000–2019)
-    hist_path = 'data/Korea_Banana_Yield_2000_2019.csv'
+    hist_path = '../data/Korea_Banana_Yield_2000_2019.csv'
     df_hist = pd.read_csv(hist_path)
     # Expects columns: ['year', 'banana_yield_t_ha']
 
     # 2) Load predicted yields (2021–2040)
-    pred_path = 'data/Predicted_Banana_Yield_2021_2040.csv'
+    pred_path = '../data/Predicted_Banana_Yield_2021_2040.csv'
     df_pred = pd.read_csv(pred_path)
     # Expects columns: ['year', 'predicted_banana_yield_t_ha']
 
