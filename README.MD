@@ -1,42 +1,23 @@
-# load\_to\_sqlite.py
+# DataMining25: Climate Data Pipeline for South Korea
 
-Ingests annual climate metrics from CSV into SQLite with **year** as the primary key.
+This repository contains scripts, data, and documentation for fetching, processing, and storing monthly climate metrics (temperature and precipitation) over South Korea (33–43 °N, 124–132 °E). We build both a historical baseline (2000–2020) and a future projection (2021–2040) to support crop‐production modeling (e.g., rice, banana) under changing climate scenarios.
 
-## Schema
+---
 
-```sql
-CREATE TABLE IF NOT EXISTS climate_metrics (
-  year INTEGER PRIMARY KEY,
-  mean_temp_C REAL,
-  total_precip_mm REAL
-);
-```
+## Folder Structure
+.
+├── data/
+│ ├── Korea_ERA5Land_Monthly_2000_2020_Simple.csv
+│ └── Korea_ERA5_Daily_Monthly_2021_2040.csv
+│
+├── database/
+│ ├── historical_climate.db # Created by load_historical_to_sqlite.py
+│ └── future_climate_metrics.db # Created by load_future_to_sqlite.py
+│
+├── scripts/
+│ ├── load_historical_to_sqlite.py
+│ ├── load_future_to_sqlite.py
+│ └── visualize_future_monthly_temps.py
+│
+└── README.md
 
-## Workflow
-
-1. **Process CSV** (`data/Korea_Annual_Climate...csv`):
-
-   * Dropped `system:index`, `.geo` columns
-   * Converted `year` to integer
-2. **Database load** (`climate_metrics.db`):
-
-   * Creates table if needed
-   * Inserts or replaces each year’s record
-
-*Model & Data*: ACCESS‑CM2 SSP2‑4.5 (2021–2040), monthly Amon data from ORNL THREDDS, subset to Korea (lat 33–43°, lon 124–132°), annual mean temp (°C) and total precip (mm).
-
-## Usage
-
-```bash
-pip install pandas
-python load_to_sqlite.py
-```
-
-## Inspect
-
-```bash
-sqlite3 climate_metrics.db
-.tables
-PRAGMA table_info(climate_metrics);
-SELECT * FROM climate_metrics LIMIT 5;
-```
