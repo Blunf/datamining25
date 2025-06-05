@@ -3,7 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 
 # 1) Load data and one‐hot encode / binary‐map exactly as before
-df = pd.read_csv("data/combined_telco_churn_with_hasInternet.csv")
+df = pd.read_csv("../data/combined_telco_churn_with_hasInternet.csv")
 
 binary_map = {"yes": 1, "no": 0, "no phone service": 0, "no internet service": 0}
 binary_cols = [

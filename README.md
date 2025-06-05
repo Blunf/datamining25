@@ -1,6 +1,7 @@
 # Two-Paragraph Summary
 
 BUILDING ON: https://www.kaggle.com/code/redpen12/churn-prediction-in-depth-eda-and-interpretations/notebook#Hypothesis-Testing
+
 DATASET: https://www.kaggle.com/datasets/aadityabansalcodes/telecommunications-industry-customer-churn-dataset/data
 
 Both models agree on a handful of key drivers but differ slightly in how they rank secondary predictors. In **logistic regression**, the top five positive drivers of churn (highest positive coefficients) are **SatisfactionScore**, **Offer E**, **PaperlessBilling**, **TenureMonths**, and **NumDependents**. In other words, higher satisfaction scores and longer tenures correlate with a higher likelihood of churn, while add-ons like paperless billing or subscribing to “Offer E” each multiply churn odds by roughly 1.5–1.8×. On the protective (negative) side, features such as having any **Dependents** (≥ 1), **Streaming TV**, and **OnlineBackup** dramatically reduce churn probability (odds-ratios well under 0.2). Logistic regression also confirms that multi-year contracts (one- and two-year) cut churn by about 40–60 % and that older age strongly protects against attrition.
@@ -22,25 +23,7 @@ In the **random forest**, **SatisfactionScore** again tops the list—alone acco
 ## Model Performance
 
 ### Random Forest
-
-
-Random Forest
-Confusion Matrix:
-                Predicted 0    Predicted 1
-Actual 0        1022           13
-Actual 1         61            313
-
-Classification Report:
-              precision    recall  f1-score   support
-
-           0     0.9437    0.9874      0.9651     1035
-           1     0.9601    0.8369      0.8943      374
-
-    accuracy                         0.9475     1409
-   macro avg     0.9519    0.9122      0.9297     1409
-weighted avg     0.9480    0.9475      0.9463     1409
-
-ROC-AUC: 0.9852
+![Random forest](fig/fig2rf.png)  
 Interpretation
 – Accuracy ≈ 94.75 %
 – Class 0 (non-churn) precision 0.9437, recall 0.9874 → RF rarely mislabels a non-churner.
@@ -48,27 +31,8 @@ Interpretation
 – ROC-AUC ≈ 0.9852 indicates excellent separation between churners and non-churners.
 
 ### Logistic Regression
+![Random forest](fig/fig3lr.png)  
 
-text
-Kopier
-Rediger
-Logistic Regression
-Confusion Matrix:
-                Predicted 0    Predicted 1
-Actual 0         974           61
-Actual 1          25          349
-
-Classification Report:
-              precision    recall  f1-score   support
-
-           0       0.97      0.94      0.96     1035
-           1       0.85      0.93      0.89      374
-
-    accuracy                        0.94     1409
-   macro avg     0.91      0.94      0.92     1409
-weighted avg    0.94      0.94      0.94     1409
-
-ROC-AUC: 0.9888
 Interpretation
 – Accuracy ≈ 93.99 %
 – Class 0 (non-churn) precision 0.97, recall 0.94 → LR mislabels slightly more non-churners than RF.

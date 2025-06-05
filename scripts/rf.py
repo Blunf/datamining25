@@ -3,7 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix, classification_report, roc_auc_score
 
-df = pd.read_csv("data/combined_telco_churn_with_hasInternet.csv")
+df = pd.read_csv("../data/combined_telco_churn_with_hasInternet.csv")
 y = df["ChurnLabel"]
 X = df.drop(columns=["ChurnLabel"])
 

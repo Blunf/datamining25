@@ -8,7 +8,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix, classification_report, roc_auc_score
 
-df = pd.read_csv("data/combined_telco_churn_with_hasInternet.csv")
+df = pd.read_csv("../data/combined_telco_churn_with_hasInternet.csv")
 
 binary_map = {"yes": 1, "no": 0, "no phone service": 0, "no internet service": 0}
 binary_cols = [

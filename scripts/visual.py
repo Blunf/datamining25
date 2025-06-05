@@ -9,7 +9,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
 # 1) Load and preprocess data
-df = pd.read_csv("data/combined_telco_churn_with_hasInternet.csv")
+df = pd.read_csv("../data/combined_telco_churn_with_hasInternet.csv")
 
 binary_map = {"yes": 1, "no": 0, "no phone service": 0, "no internet service": 0}
 binary_cols = [

@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 
 # 1) Load data
-df = pd.read_csv("data/combined_telco_churn_with_hasInternet.csv")
+df = pd.read_csv("../data/combined_telco_churn_with_hasInternet.csv")
 
 # 2) Convert all Yes/No/No phone service/No internet service → 0/1
 binary_map = {"yes": 1, "no": 0, "no phone service": 0, "no internet service": 0}
