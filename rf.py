@@ -29,6 +29,7 @@ y_pred_rf = rf.predict(X_test)
 y_proba_rf = rf.predict_proba(X_test)[:, 1]
 
 cm_rf = confusion_matrix(y_test, y_pred_rf)
+print("Random Forest")
 print("Confusion Matrix:")
 print("                Predicted 0    Predicted 1")
 print(f"Actual 0    {cm_rf[0,0]:<15} {cm_rf[0,1]}")

@@ -68,6 +68,7 @@ y_pred = pipe.predict(X_test)
 y_proba = pipe.predict_proba(X_test)[:, 1]
 
 cm = confusion_matrix(y_test, y_pred)
+print("Logistic Regression")
 print("Confusion Matrix:")
 print("                Predicted 0    Predicted 1")
 print(f"Actual 0    {cm[0,0]:<15} {cm[0,1]}")
