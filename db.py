@@ -19,7 +19,7 @@ print("\nMake sure you see all six Telco CSVs above.\n")
 # -------------------------------------------------------
 status_csv       = os.path.join(data_dir, "Telco_customer_churn_status.csv")
 services_csv     = os.path.join(data_dir, "Telco_customer_churn_services.csv")
-population_csv   = os.path.join(data_dir, "Telco_customer_churn_population.csv")  # read for completeness
+population_csv   = os.path.join(data_dir, "Telco_customer_churn_population.csv") 
 location_csv     = os.path.join(data_dir, "Telco_customer_churn_location.csv")
 demographics_csv = os.path.join(data_dir, "Telco_customer_churn_demographics.csv")
 full_csv         = os.path.join(data_dir, "Telco_customer_churn.csv")
