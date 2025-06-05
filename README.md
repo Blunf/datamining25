@@ -16,7 +16,11 @@ In the **random forest**, **SatisfactionScore** again tops the list—alone acco
 
 ### Random Forest
 
-```text
+## Model Performance
+
+### Random Forest
+
+
 Random Forest
 Confusion Matrix:
                 Predicted 0    Predicted 1
@@ -40,7 +44,114 @@ Interpretation
 – Class 1 (churn) precision 0.9601, recall 0.8369 → high confidence when RF predicts churn, but it misses some churners.
 – ROC-AUC ≈ 0.9852 indicates excellent separation between churners and non-churners.
 
+### Logistic Regression
+
+text
+Kopier
+Rediger
 Logistic Regression
+Confusion Matrix:
+                Predicted 0    Predicted 1
+Actual 0         974           61
+Actual 1          25          349
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.97      0.94      0.96     1035
+           1       0.85      0.93      0.89      374
+
+    accuracy                        0.94     1409
+   macro avg     0.91      0.94      0.92     1409
+weighted avg    0.94      0.94      0.94     1409
+
+ROC-AUC: 0.9888
+Interpretation
+– Accuracy ≈ 93.99 %
+– Class 0 (non-churn) precision 0.97, recall 0.94 → LR mislabels slightly more non-churners than RF.
+– Class 1 (churn) precision 0.85, recall 0.93 → LR catches more churners but with lower precision.
+– ROC-AUC ≈ 0.9888 shows very strong ranking ability, even slightly better than RF.
+## Model Performance
+
+### Random Forest
+
+
+Random Forest
+Confusion Matrix:
+                Predicted 0    Predicted 1
+Actual 0        1022           13
+Actual 1         61            313
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0     0.9437    0.9874      0.9651     1035
+           1     0.9601    0.8369      0.8943      374
+
+    accuracy                         0.9475     1409
+   macro avg     0.9519    0.9122      0.9297     1409
+weighted avg     0.9480    0.9475      0.9463     1409
+
+ROC-AUC: 0.9852
+Interpretation
+– Accuracy ≈ 94.75 %
+– Class 0 (non-churn) precision 0.9437, recall 0.9874 → RF rarely mislabels a non-churner.
+– Class 1 (churn) precision 0.9601, recall 0.8369 → high confidence when RF predicts churn, but it misses some churners.
+– ROC-AUC ≈ 0.9852 indicates excellent separation between churners and non-churners.
+
+### Logistic Regression
+
+text
+Kopier
+Rediger
+Logistic Regression
+Confusion Matrix:
+                Predicted 0    Predicted 1
+Actual 0         974           61
+Actual 1          25          349
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.97      0.94      0.96     1035
+           1       0.85      0.93      0.89      374
+
+    accuracy                        0.94     1409
+   macro avg     0.91      0.94      0.92     1409
+weighted avg    0.94      0.94      0.94     1409
+
+ROC-AUC: 0.9888
+Interpretation
+– Accuracy ≈ 93.99 %
+– Class 0 (non-churn) precision 0.97, recall 0.94 → LR mislabels slightly more non-churners than RF.
+– Class 1 (churn) precision 0.85, recall 0.93 → LR catches more churners but with lower precision.
+– ROC-AUC ≈ 0.9888 shows very strong ranking ability, even slightly better than RF.
+
+Random Forest
+Confusion Matrix:
+                Predicted 0    Predicted 1
+Actual 0        1022           13
+Actual 1         61            313
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0     0.9437    0.9874      0.9651     1035
+           1     0.9601    0.8369      0.8943      374
+
+    accuracy                         0.9475     1409
+   macro avg     0.9519    0.9122      0.9297     1409
+weighted avg     0.9480    0.9475      0.9463     1409
+
+ROC-AUC: 0.9852
+Interpretation
+– Accuracy ≈ 94.75 %
+– Class 0 (non-churn) precision 0.9437, recall 0.9874 → RF rarely mislabels a non-churner.
+– Class 1 (churn) precision 0.9601, recall 0.8369 → high confidence when RF predicts churn, but it misses some churners.
+– ROC-AUC ≈ 0.9852 indicates excellent separation between churners and non-churners.
+
+### Logistic Regression
+
 text
 Kopier
 Rediger
