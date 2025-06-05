@@ -12,30 +12,30 @@ if not os.path.isdir(data_dir):
 print(f"--- Files in '{data_dir}/' ---")
 for fname in sorted(os.listdir(data_dir)):
     print(f"  • {fname}")
-print("\nIf any Telco CSV is missing or misspelled, fix that before continuing.\n")
+print("\nMake sure you see all six Telco CSVs above.\n")
 
 # -------------------------------------------------------
 # 2) Build accurate file paths (case‐sensitive!)
 # -------------------------------------------------------
 status_csv       = os.path.join(data_dir, "Telco_customer_churn_status.csv")
 services_csv     = os.path.join(data_dir, "Telco_customer_churn_services.csv")
-population_csv   = os.path.join(data_dir, "Telco_customer_churn_population.csv")  # not used below but read for completeness
+population_csv   = os.path.join(data_dir, "Telco_customer_churn_population.csv")  # read for completeness
 location_csv     = os.path.join(data_dir, "Telco_customer_churn_location.csv")
 demographics_csv = os.path.join(data_dir, "Telco_customer_churn_demographics.csv")
 full_csv         = os.path.join(data_dir, "Telco_customer_churn.csv")
 
 # -------------------------------------------------------
-# 3) Read each CSV into a pandas DataFrame
+# 3) Read each CSV into pandas DataFrames
 # -------------------------------------------------------
 df_status       = pd.read_csv(status_csv)
 df_services     = pd.read_csv(services_csv)
-df_population   = pd.read_csv(population_csv)       # (we won’t merge this one, but we read it anyway)
+df_population   = pd.read_csv(population_csv)       # not merged below, but read for reference
 df_location     = pd.read_csv(location_csv)
 df_demographics = pd.read_csv(demographics_csv)
 df_full         = pd.read_csv(full_csv)
 
 # -------------------------------------------------------
-# 4) From df_full, select the “core churn columns” you originally listed
+# 4) From df_full, select the “core churn columns”
 # -------------------------------------------------------
 core_cols = [
     "CustomerID", "Gender", "Senior Citizen", "Partner", "Dependents",
@@ -47,7 +47,7 @@ core_cols = [
 df_core = df_full[core_cols].copy()
 
 # -------------------------------------------------------
-# 5) Rename “Customer ID” → “CustomerID” in the other DataFrames for consistent merging
+# 5) Rename “Customer ID” → “CustomerID” in other DataFrames
 # -------------------------------------------------------
 df_status       = df_status.rename(columns={"Customer ID": "CustomerID"})
 df_services     = df_services.rename(columns={"Customer ID": "CustomerID"})
@@ -55,8 +55,7 @@ df_location     = df_location.rename(columns={"Customer ID": "CustomerID"})
 df_demographics = df_demographics.rename(columns={"Customer ID": "CustomerID"})
 
 # -------------------------------------------------------
-# 6) Merge extra fields as needed (example fields shown below)
-#    – You can adjust which columns you pull from each DataFrame.
+# 6) Merge extra fields
 # -------------------------------------------------------
 df_merged = (
     df_core
@@ -83,77 +82,154 @@ df_merged = (
 )
 
 # -------------------------------------------------------
-# 7) Drop the CustomerID column so it isn't used as a feature
+# 7) Create HasInternet = 1 if “Internet Service” != “No”, else 0
 # -------------------------------------------------------
-df_merged = df_merged.drop(columns=["CustomerID"])
+df_merged["HasInternet"] = (
+    df_merged["Internet Service"]
+    .astype(str)
+    .str.strip()
+    .str.lower()
+    .ne("no")      # True if not exactly "no"
+).astype(int)
 
 # -------------------------------------------------------
-# 8) Convert only the strictly binary “Yes”/“No” columns into 1/0.
-#    If a column has more than 2 unique values (e.g., “Multiple Lines”),
-#    leave it as text.
+# 8) Zero‐out any “No phone service” cells (any column) and force HasInternet=0
 # -------------------------------------------------------
-
-# We'll iterate over every column in df_merged and check its unique non-null values.
 for col in df_merged.columns:
-    # Gather unique non-null string representations
-    uniques = set(df_merged[col].dropna().astype(str).str.strip().str.capitalize())
-    # If exactly {"Yes", "No"}, convert to 1/0:
-    if uniques == {"Yes", "No"}:
-        # First, standardize the column to capitalized “Yes”/“No”
-        df_merged[col] = (
-            df_merged[col]
-            .astype(str)
-            .str.strip()
-            .str.capitalize()
-        ).map({"Yes": 1, "No": 0})
-    # Otherwise, leave as is (even if it’s text with more categories)
+    mask_nops = (
+        df_merged[col]
+        .astype(str)
+        .str.strip()
+        .str.lower()
+        == "no phone service"
+    )
+    if mask_nops.any():
+        df_merged.loc[mask_nops, col] = 0
+        df_merged.loc[mask_nops, "HasInternet"] = 0
 
 # -------------------------------------------------------
-# 9) (Optional) Rename columns to remove spaces so they become easier to reference
+# 9) Convert known binary “Yes”/“No” columns to 1/0 and 
+#    internet sub‐features (“No internet service” → 0)
+# -------------------------------------------------------
+
+# 9a) Gender: “Male” → 1, “Female” → 0
+df_merged["Gender"] = (
+    df_merged["Gender"]
+    .astype(str)
+    .str.strip()
+    .str.capitalize()
+    .map({"Male": 1, "Female": 0})
+)
+
+# 9b) Single binary columns (exactly Yes/No → 1/0)
+binary_yesno = [
+    "Senior Citizen", "Partner", "Dependents",
+    "Phone Service", "Paperless Billing", "Churn Label",
+]
+
+for col in binary_yesno:
+    df_merged[col] = (
+        df_merged[col]
+        .astype(str)
+        .str.strip()
+        .str.capitalize()
+        .map({"Yes": 1, "No": 0})
+    )
+
+# 9c) Internet‐related sub‐features: “Yes” → 1, “No” → 0, “No internet service” → 0
+internet_sub = [
+    "Online Security", "Online Backup", "Device Protection",
+    "Tech Support", "Streaming TV", "Streaming Movies"
+]
+
+for col in internet_sub:
+    df_merged[col] = (
+        df_merged[col]
+        .astype(str)
+        .str.strip()
+        .str.lower()
+        .map({
+            "yes": 1,
+            "no": 0,
+            "no internet service": 0
+        })
+    )
+
+# 9d) Finally, convert “Multiple Lines” separately:
+df_merged["Multiple Lines"] = (
+    df_merged["Multiple Lines"]
+    .astype(str)
+    .str.strip()
+    .str.lower()
+    .map({
+        "yes": 1,
+        "no": 0,
+        "no phone service": 0
+    })
+)
+
+df_merged["Multiple Lines"] = df_merged["Multiple Lines"].fillna(0).astype(int)
+
+# -------------------------------------------------------
+# 10) Drop columns you do not need:
+#      CustomerID, raw Internet Service, Churn Reason, location fields
+# -------------------------------------------------------
+to_drop = [
+    "CustomerID",
+    "Internet Service",    # replaced by HasInternet
+    "Churn Reason",        # text
+    "City", "State",       # location
+    "Zip Code"
+]
+df_merged = df_merged.drop(columns=[c for c in to_drop if c in df_merged.columns])
+
+# -------------------------------------------------------
+# 11) Rename columns to remove spaces (optional)
 # -------------------------------------------------------
 df_merged = df_merged.rename(columns={
-    "Senior Citizen":        "SeniorCitizen",
-    "Internet Service":      "InternetService",
-    "Online Security":       "OnlineSecurity",
-    "Online Backup":         "OnlineBackup",
-    "Device Protection":     "DeviceProtection",
-    "Tech Support":          "TechSupport",
-    "Streaming TV":          "StreamingTV",
-    "Streaming Movies":      "StreamingMovies",
-    "Paperless Billing":     "PaperlessBilling",
-    "Payment Method":        "PaymentMethod",
-    "Churn Label":           "ChurnLabel",
-    "Number of Dependents":  "NumDependents",
-    "Tenure in Months":      "TenureMonths",
-    "Satisfaction Score":    "SatisfactionScore"
+    "Senior Citizen":       "SeniorCitizen",
+    "Online Security":      "OnlineSecurity",
+    "Online Backup":        "OnlineBackup",
+    "Device Protection":    "DeviceProtection",
+    "Tech Support":         "TechSupport",
+    "Streaming TV":         "StreamingTV",
+    "Streaming Movies":     "StreamingMovies",
+    "Paperless Billing":    "PaperlessBilling",
+    "Payment Method":       "PaymentMethod",
+    "Churn Label":          "ChurnLabel",
+    "Number of Dependents": "NumDependents",
+    "Tenure in Months":     "TenureMonths",
+    "Satisfaction Score":   "SatisfactionScore"
 })
 
 # -------------------------------------------------------
-# 10) Save the final, cleaned DataFrame back to data/
+# 12) Save the final table as CSV and SQLite
 # -------------------------------------------------------
 os.makedirs(data_dir, exist_ok=True)
 
-# 10a) CSV output
-csv_out = os.path.join(data_dir, "combined_telco_churn_cleaned.csv")
+csv_out = os.path.join(data_dir, "combined_telco_churn_with_hasInternet.csv")
 df_merged.to_csv(csv_out, index=False)
 print(f"➡️  CSV saved to: {csv_out}")
 
-# 10b) SQLite output
-db_out = os.path.join(data_dir, "combined_telco_churn_cleaned.db")
+db_out = os.path.join(data_dir, "combined_telco_churn_with_hasInternet.db")
 conn = sqlite3.connect(db_out)
 df_merged.to_sql("churn_data", conn, if_exists="replace", index=False)
 conn.close()
 print(f"➡️  SQLite DB saved to: {db_out}")
 
 # -------------------------------------------------------
-# 11) Display a preview so you can verify that only strictly binary columns became 1/0,
-#     and multi-valued columns (like “Multiple Lines”) remain as text.
+# 13) Display a preview to verify exact repr of values
 # -------------------------------------------------------
 print("\n--- First 5 rows of the cleaned, merged data ---")
 print(df_merged.head(5))
 
-print("\n--- Unique values in ‘Multiple Lines’ column  ---")
-if "Multiple Lines" in df_merged.columns:
-    print(sorted(df_merged["Multiple Lines"].dropna().unique()))
-else:
-    print("Column 'Multiple Lines' not present.")
+print("\n--- Unique values in 'Multiple Lines' after mapping (with repr) ---")
+unique_ml = df_merged["Multiple Lines"].dropna().unique()
+print(sorted(repr(v) for v in unique_ml))
+
+print("\n--- Unique values in 'HasInternet' (should be [0, 1]) ---")
+print(sorted(df_merged["HasInternet"].dropna().unique()))
+
+print("\n--- Unique values in 'OnlineSecurity' (with repr) ---")
+unique_os = df_merged["OnlineSecurity"].dropna().unique()
+print(sorted(repr(v) for v in unique_os))
